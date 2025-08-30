@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# Start local Mongo (if not already)
+docker compose up -d mongo
+
+# Check status
+docker ps --filter "ancestor=mongo:6"

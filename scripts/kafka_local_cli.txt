@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+# Run these after 'docker compose up -d zookeeper kafka' to create topics
+
+# Discover container name (should be <project>_kafka_1). Adjust if needed.
+KAFKA_CONT=$(docker ps --filter "ancestor=bitnami/kafka:3.7" --format "{{.ID}}" | head -n1)
+
+echo "Kafka container: $KAFKA_CONT"
+if [ -z "$KAFKA_CONT" ]; then
+  echo "Kafka container not found. Ensure 'docker compose up -d kafka' is running."
+  exit 1
+fi
+
+create_topic () {
+  local t=$1
+  echo "Creating topic: $t"
+  docker exec -it "$KAFKA_CONT" kafka-topics.sh --create \
+    --if-not-exists \
+    --bootstrap-server kafka:9092 \
+    --replication-factor 1 \
+    --partitions 1 \
+    --topic "$t"
+}
+
+create_topic raw_tweets_antisemitic
+create_topic raw_tweets_not_antisemitic
+create_topic preprocessed_tweets_antisemitic
+create_topic preprocessed_tweets_not_antisemitic
+create_topic enriched_preprocessed_tweets_antisemitic
+create_topic enriched_preprocessed_tweets_not_antisemitic
+
+echo "List topics:"
+docker exec -it "$KAFKA_CONT" kafka-topics.sh --bootstrap-server kafka:9092 --list

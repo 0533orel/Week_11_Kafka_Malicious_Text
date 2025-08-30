@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+# Build images
+docker compose build retriever preprocessor enricher persister dataretrieval
+
+# Start services
+docker compose up -d retriever preprocessor enricher persister dataretrieval
+
+# Check logs
+docker compose logs -f retriever preprocessor enricher persister dataretrieval

@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dataretrieval
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dataretrieval
+  template:
+    metadata:
+      labels:
+        app: dataretrieval
+    spec:
+      containers:
+      - name: dataretrieval
+        image: YOUR_REGISTRY/dataretrieval:latest
+        ports:
+        - containerPort: 8000
+        env:
+        - name: MONGO_LOCAL_URI
+          value: mongodb://mongo:27017
+        - name: MONGO_LOCAL_DB
+          value: localdb

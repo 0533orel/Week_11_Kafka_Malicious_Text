@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: preprocessor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: preprocessor
+  template:
+    metadata:
+      labels:
+        app: preprocessor
+    spec:
+      containers:
+      - name: preprocessor
+        image: YOUR_REGISTRY/preprocessor:latest
+        env:
+        - name: KAFKA_BOOTSTRAP
+          value: kafka:9092

@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: retriever
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: retriever
+  template:
+    metadata:
+      labels:
+        app: retriever
+    spec:
+      containers:
+      - name: retriever
+        image: YOUR_REGISTRY/retriever:latest
+        env:
+        - name: KAFKA_BOOTSTRAP
+          value: kafka:9092
+        - name: ATLAS_URI
+          valueFrom:
+            secretKeyRef:
+              name: atlas-secret
+              key: uri
+        - name: ATLAS_DB
+          value: IranMalDB
+        - name: ATLAS_COLLECTION
+          value: texts

@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: persister
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: persister
+  template:
+    metadata:
+      labels:
+        app: persister
+    spec:
+      containers:
+      - name: persister
+        image: YOUR_REGISTRY/persister:latest
+        env:
+        - name: KAFKA_BOOTSTRAP
+          value: kafka:9092
+        - name: MONGO_LOCAL_URI
+          value: mongodb://mongo:27017
+        - name: MONGO_LOCAL_DB
+          value: localdb

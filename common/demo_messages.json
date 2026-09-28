@@ -1,0 +1,4 @@
+[
+  {"id":"demo-001","createdate":"2026-01-01T12:00:00+00:00","antisemietic":0,"original_text":"A fictional community garden opened today."},
+  {"id":"demo-002","createdate":"2026-01-01T12:01:00+00:00","antisemietic":1,"original_text":"Synthetic routing example, assigned label one for testing only."}
+]

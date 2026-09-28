@@ -4,8 +4,7 @@ from pymongo import MongoClient, ASCENDING
 from kafka import KafkaProducer
 from bson import ObjectId
 
-ATLAS_URI = os.getenv("ATLAS_URI", "mongodb+srv://IRGC_NEW:iran135@cluster0.6ycjkak.mongodb.net/")
-ATLAS_DB = os.getenv("ATLAS_DB", "IranMalDB")
+ATLAS_DB = os.getenv("ATLAS_DB", "demo")
 ATLAS_COLLECTION = os.getenv("ATLAS_COLLECTION", "texts")
 
 KAFKA_BOOTSTRAP = os.getenv("KAFKA_BOOTSTRAP", "kafka:9092")
@@ -47,8 +46,21 @@ def is_antisemitic(doc):
     return 0
 
 def main():
-    print("[retriever] connecting to Atlas...")
-    mongo = MongoClient(ATLAS_URI)
+    if os.getenv("SOURCE_MODE", "demo") == "demo":
+        from common.demo_source import load_demo, publish_demo
+        producer = KafkaProducer(
+            bootstrap_servers=KAFKA_BOOTSTRAP,
+            value_serializer=lambda v: json.dumps(v).encode("utf-8"),
+        )
+        try:
+            publish_demo(producer, load_demo(), TOPIC_RAW_ANT, TOPIC_RAW_NOT)
+        finally:
+            producer.close()
+        return
+    from common.demo_source import source_uri
+    uri = source_uri()
+    print("[retriever] connecting to configured MongoDB...")
+    mongo = MongoClient(uri, serverSelectionTimeoutMS=5000)
     col = mongo[ATLAS_DB][ATLAS_COLLECTION]
 
     print("[retriever] connecting to Kafka...")

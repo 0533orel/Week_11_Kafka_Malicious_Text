@@ -1,0 +1,21 @@
+title = "Credential hygiene"
+[extend]
+useDefault = true
+
+[[rules]]
+id = "database-uri-password"
+description = "Literal database URI credentials"
+regex = '''(?i)(?:mongodb(?:\+srv)?|postgres(?:ql)?|mysql)://[a-z0-9_.%+-]+:([^\s@{}<>$]+)@'''
+secretGroup = 1
+
+[[rules]]
+id = "database-password-default"
+description = "Password fallback in environment lookup"
+regex = '''(?i)(?:getenv|environ\.get)\(\s*["'][A-Z_]*(?:PASS|PASSWORD)["']\s*,\s*["']([^"'\s]+)["']'''
+secretGroup = 1
+
+[[rules]]
+id = "database-password-assignment"
+description = "Literal database password in configuration"
+regex = '''(?im)^\s*(?:MONGO_PASS|MONGODB_PASSWORD|MONGODB_ROOT_PASSWORD|DB_PASSWORD|MYSQL_PASSWORD|MYSQL_ROOT_PASSWORD)[ \t]*[:=][ \t]*["']?([a-zA-Z0-9][a-zA-Z0-9_!@#%+./=-]*)'''
+secretGroup = 1

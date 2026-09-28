@@ -5,7 +5,7 @@ No heavy NLP libraries. Clean, standard code — just enough to satisfy the spec
 
 ## Services
 
-1. **retriever**: Fetches documents from MongoDB Atlas in chronological order (oldest first), 100 per minute,
+1. **retriever**: Uses bundled synthetic messages by default, or an explicitly configured MongoDB source,
    and publishes to Kafka topics:
    - `raw_tweets_antisemitic`
    - `raw_tweets_not_antisemitic`
@@ -33,6 +33,9 @@ No heavy NLP libraries. Clean, standard code — just enough to satisfy the spec
    - `GET /not_antisemitic?limit=100`
 
 
+For a fully offline fixture preview: `python -m common.demo_source`. No dependencies or DB are needed.
+See [SECURITY.md](SECURITY.md) for source configuration, scanning and limitations.
+
 ## Quick Start (Local, with Docker)
 
 1. Copy the environment template:
@@ -42,7 +45,7 @@ No heavy NLP libraries. Clean, standard code — just enough to satisfy the spec
 
 2. Start infra (Kafka+Zookeeper+Mongo):
    ```bash
-   docker compose up -d zookeeper kafka mongo
+   docker compose --env-file config/.env up -d zookeeper kafka mongo
    ```
 
 3. Create topics (run once — see `scripts/kafka_local_cli.txt` for details). Example:
@@ -52,7 +55,7 @@ No heavy NLP libraries. Clean, standard code — just enough to satisfy the spec
 
 4. Build and run all services:
    ```bash
-   docker compose up -d --build retriever preprocessor enricher persister dataretrieval
+   docker compose --env-file config/.env up -d --build retriever preprocessor enricher persister dataretrieval
    ```
 
 5. Test API:
